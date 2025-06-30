@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Booking | SmartHotel</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f9f9f9;
+            padding: 40px;
+        }
+        .form-container {
+            background: #fff;
+            padding: 30px;
+            max-width: 600px;
+            margin: 0 auto;
+            border-radius: 12px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+        form label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+            color: #333;
+        }
+        form input, form select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 15px;
+        }
+        .btn-submit {
+            margin-top: 25px;
+            background-color: #007B5E;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%;
+        }
+        .btn-submit:hover {
+            background-color: #005f46;
+        }
+    </style>
+</head>
+<body>
+
+<div class="form-container">
+    <h2>Add New Booking</h2>
+    <form th:action="@{/bookings/save}" th:object="${booking}" method="post">
+
+        <!-- Room dropdown -->
+        <label for="room">Room:</label>
+        <select th:field="*{room.id}" required>
+            <option th:each="room : ${rooms}"
+                    th:value="${room.id}"
+                    th:text="${room.roomNumber + ' - ' + room.type + ' ($' + room.price + ')'}">
+            </option>
+        </select>
+
+        <!-- Customer name input -->
+        <label for="customerName">Customer Name:</label>
+        <input type="text" th:field="*{customer.name}" required />
+
+        <!-- Check-in -->
+        <label for="checkInDate">Check-In Date:</label>
+        <input type="date" th:field="*{checkInDate}" required />
+
+        <!-- Check-out -->
+        <label for="checkOutDate">Check-Out Date:</label>
+        <input type="date" th:field="*{checkOutDate}" required />
+
+        <!-- Remove Status Field from Form -->
+
+        <button type="submit" class="btn-submit">Submit Booking</button>
+    </form>
+</div>
+
+</body>
+</html>

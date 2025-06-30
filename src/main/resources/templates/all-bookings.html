@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8">
+  <title>All Bookings | SmartHotel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #0a0a0a;
+      color: #ffffff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 40px 20px;
+      position: relative;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background:
+        radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255, 107, 107, 0.3) 0%, transparent 50%),
+        radial-gradient(circle at 50% 50%, rgba(120, 119, 198, 0.15) 0%, transparent 50%);
+      z-index: -2;
+      animation: float 18s ease-in-out infinite;
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, rgba(10, 10, 10, 0.8), rgba(20, 20, 30, 0.9), rgba(10, 10, 10, 0.8));
+      z-index: -1;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-30px) rotate(180deg); }
+    }
+
+    h2 {
+      text-align: center;
+      font-size: 2rem;
+      margin-bottom: 30px;
+      background: linear-gradient(to right, #ffffff, #cccccc);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .table-container {
+      background: rgba(255, 255, 255, 0.06);
+      backdrop-filter: blur(20px);
+      border-radius: 20px;
+      padding: 20px;
+      width: 95%;
+      max-width: 1100px;
+      overflow-x: auto;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 15px;
+      color: #fff;
+    }
+
+    th, td {
+      padding: 14px 18px;
+      text-align: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    th {
+      background-color: #764ba2;
+      color: white;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+
+    tr:nth-child(even) {
+      background-color: rgba(255, 255, 255, 0.05);
+    }
+
+    button {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    button:hover {
+      background: linear-gradient(135deg, #5a67d8, #6b46c1);
+      transform: scale(1.05);
+    }
+
+    @media screen and (max-width: 768px) {
+      th, td {
+        padding: 10px;
+        font-size: 13px;
+      }
+
+      button {
+        padding: 6px 12px;
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h2>All Bookings</h2>
+
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Room</th>
+          <th>Guest Name</th>
+          <th>Check-In</th>
+          <th>Check-Out</th>
+          <th>Status</th>
+          <th>Cancel</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="booking : ${bookings}">
+          <td th:text="${booking.id}"></td>
+          <td th:text="${booking.room.roomNumber + ' - ' + booking.room.type}"></td>
+          <td th:text="${booking.guest?.name}">N/A</td>
+          <td th:text="${booking.checkInDate}"></td>
+          <td th:text="${booking.checkOutDate}"></td>
+          <td th:text="${booking.status}"></td>
+          <td>
+            <form th:action="@{'/bookings/cancel/' + ${booking.id}}" method="post">
+              <input type="hidden"
+                     th:if="${_csrf != null}"
+                     th:name="${_csrf.parameterName}"
+                     th:value="${_csrf.token}" />
+              <button type="submit" onclick="return confirm('Are you sure you want to cancel this booking?')">Cancel</button>
+            </form>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</body>
+</html>
