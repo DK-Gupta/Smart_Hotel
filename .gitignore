@@ -1,5 +1,3 @@
-# Ignore Maven output
-/target/
 
 # Ignore Eclipse files
 .classpath
