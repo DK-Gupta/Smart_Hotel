@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Select Other Services - SmartHotel</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #0a0a0a;
+            color: #ffffff;
+            min-height: 100vh;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background:
+                radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 107, 107, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(120, 119, 198, 0.15) 0%, transparent 50%);
+            z-index: -2;
+            animation: float 18s ease-in-out infinite;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(10, 10, 10, 0.8), rgba(20, 20, 30, 0.9), rgba(10, 10, 10, 0.8));
+            z-index: -1;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-30px) rotate(180deg); }
+        }
+
+        .service-container {
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 30px;
+            width: 100%;
+            max-width: 1000px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 30px;
+            background: linear-gradient(to right, #ffffff, #cccccc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 15px;
+            color: #fff;
+        }
+
+        th, td {
+            padding: 14px 18px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        th {
+            background-color: #764ba2;
+            color: white;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+
+        tr:nth-child(even) {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .submit-button {
+            display: block;
+            margin: 30px auto 0;
+            background-color: #764ba2;
+            color: white;
+            border: none;
+            padding: 14px 30px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s ease-in-out;
+        }
+
+        .submit-button:hover {
+            background-color: #764ba2;
+            transform: scale(1.03);
+        }
+
+        .no-data {
+            text-align: center;
+            font-size: 18px;
+            padding: 30px;
+            color: #cccccc;
+        }
+
+        @media screen and (max-width: 768px) {
+            th, td {
+                font-size: 13px;
+                padding: 12px;
+            }
+
+            .submit-button {
+                width: 100%;
+                font-size: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="service-container">
+    <h1>Select Other Services</h1>
+
+    <div th:if="${#lists.isEmpty(services)}" class="no-data">
+        No services available at the moment.
+    </div>
+
+    <form th:action="@{/services/select}" method="post" th:if="${!#lists.isEmpty(services)}">
+        <table>
+            <thead>
+            <tr>
+                <th>Select</th>
+                <th>Service Name</th>
+                <th>Category</th>
+                <th>Price (₹)</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="service : ${services}">
+                <td><input type="checkbox" name="selectedServices" th:value="${service.id}"/></td>
+                <td th:text="${service.name}">Service Name</td>
+                <td th:text="${service.category}">Category</td>
+                <td th:text="${#numbers.formatDecimal(service.price, 2, 2)}">100.00</td>
+            </tr>
+            </tbody>
+        </table>
+
+        <button type="submit" class="submit-button">Add Selected Services</button>
+    </form>
+</div>
+</body>
+</html>
