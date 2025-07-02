@@ -15,10 +15,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import java.time.LocalDate;
-import org.springframework.format.annotation.DateTimeFormat;
 
+import java.time.LocalDate;
 import java.util.List;
+import org.springframework.format.annotation.DateTimeFormat;
 
 @Controller
 public class BookingController {
@@ -52,9 +52,21 @@ public class BookingController {
                            @AuthenticationPrincipal UserDetails userDetails,
                            RedirectAttributes redirectAttributes) {
 
+        // Validate date logic
+        LocalDate today = LocalDate.now();
+        if (checkInDate.isBefore(today)) {
+            redirectAttributes.addFlashAttribute("error", "Check-in date cannot be in the past.");
+            return "redirect:/book-room";
+        }
+
+        if (checkOutDate.isBefore(checkInDate)) {
+            redirectAttributes.addFlashAttribute("error", "Check-out date must be after check-in date.");
+            return "redirect:/book-room";
+        }
+
         Room room = roomRepository.findById(roomId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid room ID"));
-        
+
         if (room.getQuantity() <= 0) {
             redirectAttributes.addFlashAttribute("error", "Selected room is not available.");
             return "redirect:/book-room";
@@ -63,7 +75,7 @@ public class BookingController {
         // Decrease room quantity
         room.setQuantity(room.getQuantity() - 1);
         if (room.getQuantity() == 0) {
-            room.setAvailable(false); // Optional: set unavailable when quantity = 0
+            room.setAvailable(false); // Set unavailable if no rooms left
         }
         roomRepository.save(room);
 
